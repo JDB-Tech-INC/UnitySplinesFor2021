@@ -1,0 +1,26 @@
+.tangent-linear {
+	background-image: url("../Resources/Icons/Tangent_Linear.png");
+}
+
+.tangent-continuous {
+	background-image: url("../Resources/Icons/Tangent_Continuous.png");
+}
+
+.tangent-mirrored {
+	background-image: url("../Resources/Icons/Tangent_Mirrored.png");
+}
+
+.tangent-broken {
+	background-image: url("../Resources/Icons/Tangent_Broken.png");
+}
+
+.tangent-autosmooth {
+	background-image: url("../Resources/Icons/AutoSmoothKnot.png");
+}
+#PositionIcon {
+	background-image: resource("Icons/MoveTool on.png");
+}
+
+#RotationIcon {
+	background-image: resource("Icons/RotateTool On.png");
+}

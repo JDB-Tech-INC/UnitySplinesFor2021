@@ -1,0 +1,23 @@
+{
+  "name": "com.unity.splines",
+  "displayName": "Splines",
+  "version": "0.0.9",
+  "unity": "2021.3",
+  "description": "A port of Unity's 2022.2 spline package to work in 2021.3. Work with curves and paths. Use the Splines package to generate objects and behaviors along paths, create trajectories, and draw shapes.",
+  "dependencies": {
+    "com.unity.settings-manager": "1.0.3",
+    "com.unity.mathematics": "1.2.1",
+    "com.unity.burst": "1.6.0-pre.2"
+  },
+  "keywords": [
+    "spline",
+    "curve",
+    "path"
+  ],
+  "testables": [
+    "com.unity.test-framework.performance"
+  ],
+  "_upm": {
+    "changelog": "### Added\r\n\r\n- Added the ability to edit multiple spline elements in the element inspector.\r\n- Added functionality to join knots from different splines.\r\n- Added functionality to reverse the flow of a spline.\r\n\r\n### Changed\r\n\r\n- Added a dropdown menu to select tangent modes to the Element Inspector.\r\n- Updated the `Draw Splines Tool` to display only one tangent when a new knot is created.\r\n- Simplified tangents in the `Draw Splines Tool` by removing the interactable handle . \r\n- Renamed `Knot Placement Tool` to `Draw Splines Tool`.\r\n- Modified the `Draw Splines Tool` to account for multiple splines.\r\n\r\n### Fixed\r\n\r\n- Fixed SplineInspector knot removal not keeping metadata consistent (KnotLinks).\r\n- Fixed an issue that caused auto-smoothed tangents to show in the `Draw Splines Tool` and be selectable by rect selection. \r\n- Added `ReadOnly` to knot's and length's `NativeArray` to fix IndexOutOfRangeException on `NativeSpline`. \r\n- Fixed tangents when closing the spline to keep user-defined values.\r\n- Fixed index error in the `Spline.SendSizeChangeEvent` method.\r\n- Fixed a case where inserting a knot would not update adjacent knots with \"auto-smooth\" tangent mode."
+  },
+}

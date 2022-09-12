@@ -1,0 +1,6 @@
+* [About Splines](index.md)
+    * [What's new](whats-new.md)
+    * [Splines upgrade guide](upgrade-guide.md)
+* [Spline Container](spline-container.md) 
+* [Create a spline](create-a-spline.md)
+* [Manipulate splines](manipulate-splines.md)
