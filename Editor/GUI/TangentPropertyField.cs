@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
+#if !UNITY_2022_1_OR_NEWER
+using UnityEditor.UIElements;
+#endif
 
 namespace UnityEditor.Splines
 {
@@ -15,12 +18,12 @@ namespace UnityEditor.Splines
         const string k_TangentMagnitudeFloatFieldStyle = "tangent-magnitude-floatfield";
 
         readonly BezierTangent m_Direction;
-        //readonly FloatField m_Magnitude;
-        //public readonly Float3PropertyField<SelectableKnot> vector3field;
+        readonly FloatField m_Magnitude;
+        public readonly Float3PropertyField<SelectableKnot> vector3field;
 
         IReadOnlyList<SelectableKnot> m_Elements = new List<SelectableKnot>(0);
 
-        //public event Action changed;
+        public event Action changed;
 
         public TangentPropertyField(string text, string vect3name, BezierTangent direction)
         {
@@ -30,27 +33,31 @@ namespace UnityEditor.Splines
             AddToClassList(k_TangentFoldoutStyle);
             AddToClassList("unity-base-field");
 
+            style.marginBottom = style.marginLeft = style.marginRight = style.marginTop = 0;
+
             var foldout = new Foldout() { value = false };
             var foldoutToggle = foldout.Q<Toggle>();
-            //m_Magnitude = new FloatField(L10n.Tr(text), 3);
-            //vector3field = new Float3PropertyField<SelectableKnot>("", GetTangentPosition, ApplyPosition) { name = vect3name };
+
+            m_Magnitude = new FloatField(L10n.Tr(text),6);
+            m_Magnitude.style.flexDirection = FlexDirection.Row;
+            m_Magnitude.RemoveFromClassList("unity-base-field");
+            vector3field = new Float3PropertyField<SelectableKnot>("", GetTangentPosition, ApplyPosition) { name = vect3name };
 
             //Build UI Hierarchy
-            //Add(foldout);
-            //foldoutToggle.Add(m_Magnitude);
-            //foldout.Add(vector3field);
+            Add(foldout);
+            foldoutToggle.Add(m_Magnitude);
+            foldout.Add(vector3field);
+            foldout.Q<VisualElement>("unity-content").style.marginBottom = 0;
 
-            //var field = m_Magnitude.Q<VisualElement>("unity-text-input");
-            //field.AddToClassList(k_TangentMagnitudeFloatFieldStyle);
+            var field = m_Magnitude.Q<VisualElement>("unity-text-input");
+            field.AddToClassList(k_TangentMagnitudeFloatFieldStyle);
 
-            /*
             vector3field.changed += () =>
             {
                 Update(m_Elements);
                 changed?.Invoke();
             };
-            */
-            /*
+
             m_Magnitude.RegisterValueChangedCallback((evt) =>
             {
                 var value = evt.newValue;
@@ -71,7 +78,6 @@ namespace UnityEditor.Splines
                 Update(m_Elements);
                 changed?.Invoke();
             });
-            */
         }
 
         public void Update(IReadOnlyList<SelectableKnot> elements)
@@ -82,11 +88,11 @@ namespace UnityEditor.Splines
             for (int i = 0; i < elements.Count; ++i)
                 s_LengthBuffer.Add(math.length((m_Direction == BezierTangent.In ? elements[i].TangentIn : elements[i].TangentOut).LocalPosition));
 
-            //m_Magnitude.showMixedValue = SplineGUIUtility.HasMultipleValues(s_LengthBuffer, s_MagnitudeComparer);
-            //if (!m_Magnitude.showMixedValue)
-            //    m_Magnitude.SetValueWithoutNotify(s_LengthBuffer[0]);
+            m_Magnitude.showMixedValue = SplineGUIUtility.HasMultipleValues(s_LengthBuffer, s_MagnitudeComparer);
+            if (!m_Magnitude.showMixedValue)
+                m_Magnitude.SetValueWithoutNotify(s_LengthBuffer[0]);
 
-            //vector3field.Update(elements);
+            vector3field.Update(elements);
         }
 
         float3 GetTangentPosition(SelectableKnot knot)
@@ -98,7 +104,7 @@ namespace UnityEditor.Splines
         {
             new SelectableTangent(knot.SplineInfo, knot.KnotIndex, m_Direction) { LocalPosition = position };
         }
-        
+
         void UpdateTangentMagnitude(SelectableTangent tangent, float value, float directionSign)
         {
             var direction = new float3(0, 0, directionSign);

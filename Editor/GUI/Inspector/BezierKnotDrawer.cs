@@ -9,10 +9,10 @@ namespace UnityEditor.Splines
 {
     sealed class BezierKnotDrawer : ElementDrawer<SelectableKnot>
     {
-        //readonly Float3PropertyField<SelectableKnot> m_Position;
-        //readonly Float3PropertyField<SelectableKnot> m_Rotation;
-        readonly TangentModeDropdown<SelectableKnot> m_Mode;
-        readonly BezierTangentModeDropdown<SelectableKnot> m_BezierMode;
+        readonly Float3PropertyField<SelectableKnot> m_Position;
+        readonly Float3PropertyField<SelectableKnot> m_Rotation;
+        readonly TangentModePropertyField<SelectableKnot> m_Mode;
+        readonly BezierTangentPropertyField<SelectableKnot> m_BezierMode;
         readonly TangentPropertyField m_TangentIn;
         readonly TangentPropertyField m_TangentOut;
 
@@ -22,45 +22,37 @@ namespace UnityEditor.Splines
             Add(row = new VisualElement(){name = "Vector3WithIcon"});
             row.style.flexDirection = FlexDirection.Row;
             row.Add(new VisualElement(){name = "PositionIcon"});
-            //row.Add(m_Position = new Float3PropertyField<SelectableKnot>("",
-            //    (knot) => knot.LocalPosition, 
-            //    (knot, value) => knot.LocalPosition = value)
-            //    { name = "Position" });
+            row.Add(m_Position = new Float3PropertyField<SelectableKnot>("",
+                (knot) => knot.LocalPosition, 
+                (knot, value) => knot.LocalPosition = value)
+                { name = "Position" });
 
-            //m_Position.style.flexGrow = 1;
+            m_Position.style.flexGrow = 1;
 
             Add(row = new VisualElement(){name = "Vector3WithIcon"});
             row.style.flexDirection = FlexDirection.Row;
             row.Add(new VisualElement(){name = "RotationIcon"});
-            //row.Add(m_Rotation = new Float3PropertyField<SelectableKnot>("",
-            //    (knot) => ((Quaternion)knot.LocalRotation).eulerAngles,
-            //    (knot, value) => knot.LocalRotation = Quaternion.Euler(value))
-            //    { name = "Rotation" });
+            row.Add(m_Rotation = new Float3PropertyField<SelectableKnot>("",
+                (knot) => ((Quaternion)knot.LocalRotation).eulerAngles,
+                (knot, value) => knot.LocalRotation = Quaternion.Euler(value))
+                { name = "Rotation" });
 
-            //m_Rotation.style.flexGrow = 1;
+            m_Rotation.style.flexGrow = 1;
 
             Add(new Separator());
 
-            Add(m_Mode = new TangentModeDropdown<SelectableKnot>());
-            m_Mode.changed += () =>
-            {
-                m_BezierMode.Update(targets);
-                UpdateTangentsState();
-            };
+            Add(m_Mode = new TangentModePropertyField<SelectableKnot>());
+            m_Mode.changed += Update;
 
-            Add(m_BezierMode = new BezierTangentModeDropdown<SelectableKnot>());
-            m_BezierMode.changed += () =>
-            {
-                m_Mode.Update(targets);
-                UpdateTangentsState();
-            };
+            Add(m_BezierMode = new BezierTangentPropertyField<SelectableKnot>());
+            m_BezierMode.changed += Update;
 
             Add(m_TangentIn = new TangentPropertyField("In", "TangentIn", BezierTangent.In));
             Add(m_TangentOut = new TangentPropertyField("Out", "TangentOut", BezierTangent.Out));
 
             //Update opposite to take into account some tangent modes
-            //m_TangentIn.changed += () => m_TangentOut.Update(targets);
-            //m_TangentOut.changed += () => m_TangentIn.Update(targets);
+            m_TangentIn.changed += () => m_TangentOut.Update(targets);
+            m_TangentOut.changed += () => m_TangentIn.Update(targets);
 
             Add(new Separator());
         }
@@ -70,15 +62,15 @@ namespace UnityEditor.Splines
             if (targets.Count > 1)
                 return $"<b>({targets.Count}) Knots</b> selected";
             
-            return $"<b>Knot {target.KnotIndex}</b> selected";
+            return $"<b>Knot {target.KnotIndex}</b> (<b>Spline {target.SplineInfo.Index}</b>) selected";
         }
 
         public override void Update()
         {
             base.Update();
             
-            //m_Position.Update(targets);
-            //m_Rotation.Update(targets);
+            m_Position.Update(targets);
+            m_Rotation.Update(targets);
 
             m_Mode.Update(targets);
             m_BezierMode.Update(targets);
@@ -105,19 +97,14 @@ namespace UnityEditor.Splines
                 tangentOutSelectable |= SplineSelectionUtility.IsSelectable(targets[i].TangentOut);
             }
 
-            m_TangentIn.style.display = tangentsModifiable ? DisplayStyle.Flex : DisplayStyle.None;
-            m_TangentOut.style.display = tangentsModifiable ? DisplayStyle.Flex : DisplayStyle.None;
+            m_TangentIn.SetEnabled(tangentsModifiable && tangentInSelectable);
+            m_TangentOut.SetEnabled(tangentsModifiable && tangentOutSelectable);
 
-            /*
             if(tangentsModifiable)
             {
                 m_TangentIn.vector3field.SetEnabled(tangentsBroken);
                 m_TangentOut.vector3field.SetEnabled(tangentsBroken);
             }
-            */
-
-            m_TangentIn.SetEnabled(tangentInSelectable);
-            m_TangentOut.SetEnabled(tangentOutSelectable);
         }
     }
 }

@@ -7,7 +7,7 @@ using Unity.Mathematics;
 namespace UnityEngine.Splines
 {
     /// <summary>
-    /// A readonly representation of <see cref="Spline"/> that is optimized for efficient access and queries.
+    /// A read-only representation of <see cref="Spline"/> that is optimized for efficient access and queries.
     /// NativeSpline can be constructed with a Spline and Transform. If a transform is applied, all values will be
     /// relative to the transformed knot positions.
     /// </summary>
@@ -66,6 +66,10 @@ namespace UnityEngine.Splines
         /// <returns>An IEnumerator that is used to iterate the <see cref="BezierKnot"/> collection.</returns>
         public IEnumerator<BezierKnot> GetEnumerator() => m_Knots.GetEnumerator();
 
+        /// <summary>
+        /// Gets an enumerator that iterates through the <see cref="BezierKnot"/> collection.
+        /// </summary>
+        /// <returns>An IEnumerator that is used to iterate the <see cref="BezierKnot"/> collection.</returns>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
