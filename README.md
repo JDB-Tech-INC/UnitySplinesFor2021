@@ -1,4 +1,9 @@
 # About
+This is a version of Unity's spline system backported to work in 2021. I basically just commented out the parts that don't compile, which are all UIToolkit stuff to show the tangents numerically in the component, so not really that important. These could likely be recreated in the 2021 version of UIToolkit easily enought.
+
+
+----UNITY----
+# About
 
 This package contains a framework and tools for working with curves and splines.
 
